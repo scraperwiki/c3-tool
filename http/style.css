@@ -1,0 +1,158 @@
+body {
+  padding: 0;  
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#editorPanel {
+  position: absolute;
+  width: 100%;
+  height: 150px;
+}
+
+#outputPanel {
+  position: absolute;
+  width: 100%;
+  top: 150px;
+  bottom: 15px;
+  overflow: auto;
+}
+
+#schemaPanel {
+  display: none;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+}
+
+#editorPanel .btn-toolbar {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  left: 20px;
+  z-index: 100;
+  margin: 0;
+}
+
+#problem {
+  margin-left: 20px;
+}
+
+.inserterHit,
+.dropdown-menu a {
+  cursor: pointer;
+}
+
+.inserterHit:hover .inserter {
+  text-decoration: underline;
+}
+
+/* This is probably quite naughty */
+
+#editorPanel {
+  padding: 10px 0 10px 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.ace_scrollbar {
+  display: none;
+}
+
+
+@media only screen {
+
+  #schemaPanel,
+  #editorPanel,
+  #outputPanel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+  }
+
+  #schemaPanel {
+    display: block;
+    left: 0;
+    width: 20%;
+    background-color: #e4e8ee;
+    overflow: auto;
+  }
+
+  #editorPanel {
+    left: 20%;
+    width: 30%;
+    z-index: 999;
+  }
+
+  #outputPanel {
+    left: 50%;
+    width: 50%;
+  }
+
+  #schemaPanel h1 {
+    font-size: 12px;
+    line-height: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 10px 15px;
+  }
+
+  #schemaPanel h2 {
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 10px 15px 5px 10px;
+    background: transparent url(table.png) 0 50% no-repeat;
+    padding-left: 25px;
+    color: #6d7e9b;
+    text-shadow: 0 1px 0 #fff;
+  }
+
+  #schemaPanel ul {
+    margin: 0 0 15px 0;
+    list-style: none;
+  }
+
+  #schemaPanel li {
+    font-size: 14px;
+    line-height: 18px;
+    margin: 5px 15px 5px 35px;
+    color: #6d7e9b;
+    text-shadow: 0 1px 0 #fff;
+    margin-bottom: 5px;
+  }
+
+  #schemaPanel li .example {
+    font-size: 12px;
+
+    -webkit-transition: height 100ms linear;
+    -moz-transition: height 100ms linear;
+    -ms-transition: height 100ms linear;
+    -o-transition: height 100ms linear;
+    transition: height 100ms linear;
+
+    height: 0;
+    overflow: hidden;
+    display: block;
+    white-space: pre;
+    text-overflow: ellipsis;
+  }
+  #schemaPanel li:hover .example {
+    height: 20px;
+  }
+
+  table th:first-child,
+  table td:first-child {
+    padding-left: 20px;
+  }
+
+}
