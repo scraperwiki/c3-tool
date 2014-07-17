@@ -13,12 +13,15 @@ var err = function(head, body) {
 var real_run = function() {
   console.log("real_run called")
 
-  var code = editor.getValue()
-  scraperwiki.sql(code, function (response) {
+  var sql_code = editor.getValue()
+  var c3_code = c3code.getValue()
+  scraperwiki.sql(sql_code, function (response) {
       if (!response || response.length < 1) {
 	err("No data", "The table is empty")
       } else {
         //-----------------------------------------------------------
+        eval(c3_code)
+        /*
         var chart = c3.generate({
           bindto: "#mychart",
           data: {
@@ -35,6 +38,7 @@ var real_run = function() {
               y2: { show : true },
           },
         })
+        */
         //-----------------------------------------------------------
       }
       show_not_loading()
@@ -47,9 +51,12 @@ var real_run = function() {
 var real_save = function() {
   console.log("real_save called")
 
-  var code = editor.getValue()
-  var cmd = "mkdir -p code; cat >code/query.sql.$$.new <<\"ENDOFSCRAPER\"\n" + code + "\nENDOFSCRAPER\n"
+  var sql_code = editor.getValue()
+  var c3_code = c3code.getValue()
+  var cmd = "mkdir -p code; cat >code/query.sql.$$.new <<\"ENDOFSCRAPER\"\n" + sql_code + "\nENDOFSCRAPER\n"
   cmd = cmd + "mv code/query.sql.$$.new code/query.sql"
+  cmd = cmd + "; cat >code/chart.js.$$.new <<\"ENDOFSCRAPER\"\n" + c3_code + "\nENDOFSCRAPER\n"
+  cmd = cmd + "mv code/chart.js.$$.new code/chart.js"
   scraperwiki.exec(cmd, function () {
   }, function (jqXHR, textStatus, errorThrown) {
     err("Error saving query", textStatus, true)
@@ -68,8 +75,21 @@ var load = function() {
       editor.setValue(data)
       editor.clearSelection()
       editor.focus()
-      run()
-      editor.on('change', real_save_throttled)
+
+      scraperwiki.exec('mkdir -p code; touch code/chart.js; cat code/chart.js', function(data) {
+        data = data.replace(/\s\s*$/, '')
+        if (data == "") {
+          // TODO
+          //loaded_empty = true
+          //use_default_query_if_needed()
+        } else {
+          c3code.setValue(data)
+          c3code.clearSelection()
+          c3code.focus()
+          run()
+          c3code.on('change', real_save_throttled)
+        }
+      })
     }
   })
 }
