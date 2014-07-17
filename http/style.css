@@ -5,7 +5,7 @@ body {
   position: relative;
 }
 
-#editorPanel {
+#editorPanel, #c3codePanel {
   position: absolute;
   width: 100%;
   height: 150px;
@@ -23,7 +23,7 @@ body {
   display: none;
 }
 
-#editor {
+#editor, #c3code {
   width: 100%;
   height: 100%;
 }
@@ -76,7 +76,7 @@ body {
     position: fixed;
     top: 0;
     bottom: 0;
-    height: 100%;
+    height: 40%;
   }
 
   #schemaPanel {
@@ -93,9 +93,17 @@ body {
     z-index: 999;
   }
 
-  #outputPanel {
+  #c3codePanel {
     left: 50%;
     width: 50%;
+    z-index: 999;
+  }
+
+  #outputPanel {
+    left: 0%;
+    width: 100%;
+    top: 40%;
+    height: 60%;
   }
 
   #schemaPanel h1 {

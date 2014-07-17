@@ -1,4 +1,5 @@
 var editor
+var c3code
 
 var err = function(head, body) {
   console.log("got an error")
@@ -17,24 +18,24 @@ var real_run = function() {
       if (!response || response.length < 1) {
 	err("No data", "The table is empty")
       } else {
-	var $head = $('<thead><tr></tr></thead>')
-	$.each(response[0], function (key, value) {
-	  $('tr', $head).append('<th>' + key + '</th>')
-	})
-
-	$('#problem').hide()
-	$('#table').empty()
-	$('#table').append($head)
-
-	var $tbody = $('<tbody></tbody>')
-	$.each(response, function (ix, table) {
-	  var $row = $('<tr></tr>')
-	  $.each(table, function (key, value) {
-	    $row.append('<td>' + value + '</td>')
-	  })
-	  $tbody.append($row)
-	})
-	$('#table').append($tbody)
+        //-----------------------------------------------------------
+        var chart = c3.generate({
+          bindto: "#mychart",
+          data: {
+              x: 'Date',
+              json: response,
+              keys: { value: ['Date', 'Low', 'High', 'Volume'] },
+              axes: { Low: 'y', High: 'y', Volume: 'y2' }
+          },
+          point: {
+              show: false
+          },
+          axis: {
+              x: { type: 'timeseries', tick: { format: '%Y-%m-%d', count : 8 } },
+              y2: { show : true },
+          },
+        })
+        //-----------------------------------------------------------
       }
       show_not_loading()
   }, function (response) {
@@ -97,22 +98,6 @@ var use_default_query = function() {
   editor.clearSelection()
   editor.focus()
 }
-var use_group_query = function() {
-  table = Object.keys(meta.table)[0]
-  cols = meta.table[table].columnNames
-  var col = Math.min(cols.length, 2)
-  data = "select \n" +
-      "\t" + cols[col] + ",\n" +
-      "\tcount(*) as c\n" +
-      "from " + table + "\n"
-  data += "group by " + cols[col] + "\n"
-  data += "order by c desc\n"
-  data += "limit 20" + "\n"
-
-  editor.setValue(data)
-  editor.clearSelection()
-  editor.focus()
-}
 
 var show_loading = function() {
   $('#run').addClass('loading').html('Running&hellip;')
@@ -128,35 +113,6 @@ var run = function() {
   show_loading()
   real_run()
 }
-
-var api_json = function() {
-  var code = editor.getValue()
-  var target = scraperwiki.readSettings().target
-  var json_url = target.url + "/sql/?q=" + encodeURIComponent(code)
-  window.open(json_url, "_json_api_" + target.box)
-}
-
-/* 
-This doesn't work yet - needs better user interface to display
-
-  var api_table_static = function() {
-  var table_html = "<html><head>" +
-    '<link rel="stylesheet" href="//scraperwiki.com/vendor/style/bootstrap.min.css">' +
-    '<link rel="stylesheet" href="//scraperwiki.com/style/scraperwiki.css">' e
-    "</head><body>" + $('#table').parent().html() + "</body></html>"
-
-  var filename = "table.html"
-  var cmd = "cat >http/" + filename + ".new <<\"ENDOFTABLE\"\n" + table_html + "\nENDOFTABLE\n"
-  cmd = cmd + "mv http/" + filename + ".new http/" + filename
-
-  scraperwiki.exec(cmd, function () {
-    var source = scraperwiki.readSettings().source
-    var table_static_url = source.url + "/http/" + encodeURIComponent(filename)
-    window.open(table_static_url, "_table_static_api_" + source.box)
-  }, function (jqXHR, textStatus, errorThrown) {
-    err("Error saving static table", textStatus, true)
-  })
-} */
 
 // http://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript-jquery
 String.prototype.hashCode = function(){
@@ -228,10 +184,19 @@ $(function() {
   editor = ace.edit("editor")
   editor.setFontSize(16)
   editor.renderer.setShowGutter(false)
-  editor.session.setUseWrapMode(true);
-  editor.session.setWrapLimitRange(null, null);
+  editor.session.setUseWrapMode(true)
+  editor.session.setWrapLimitRange(null, null)
   editor.setTheme("ace/theme/clouds")
   editor.getSession().setMode("ace/mode/sql")
+
+  c3code = ace.edit("c3code")
+  c3code.setFontSize(16)
+  c3code.renderer.setShowGutter(false)
+  c3code.session.setUseWrapMode(true)
+  c3code.session.setWrapLimitRange(null, null)
+  c3code.setTheme("ace/theme/clouds")
+  c3code.getSession().setMode("ace/mode/javascript")
+
   load()
   get_meta()
   $('#run').on('click', run)
